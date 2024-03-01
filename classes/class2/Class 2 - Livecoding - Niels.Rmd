@@ -1,0 +1,63 @@
+---
+title: "Class 2 Livecoding - Niels"
+author: "Niels"
+date: "2024-02-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse, rstanarm)
+```
+
+```{r}
+# defining first set of parameters
+mu_1 <- 0.0
+sigma_1 <- 1.0
+tau_1 <- 1.0
+
+# defining functions
+f_1 <- function(x, sigma, mu){
+  (1/(sigma*sqrt(2*pi)))*exp(-1/2*((x-mu)/sigma)^2)
+}
+
+f_2 <- function(x, tau, mu) {
+  (sqrt(tau/(2*pi)))*exp((-tau*(x-mu)^2)/2)
+}
+
+# defining x-values
+x_values <- seq(-5, 5, 0.01)
+
+# defining y-values with first set of parameters
+y_f_1_v1 <- f_1(x_values, sigma = 1, mu = 0)
+
+# defining y-values with first set of parameters
+y_f_2_v1 <- f_2(x_values, tau = 1, mu = 0)
+
+# creating data frame for plotting
+df_v1 <- data.frame(x_values, y_f_1_v1, y_f_2_v1)
+
+# plotting the functions with first set of parameters
+ggplot(data = df_v1, aes(x = x_values)) +
+  geom_line(aes(y = y_f_1_v1), color = "red") +
+  geom_line(aes(y = y_f_2_v1), color = "blue") + theme_minimal()
+
+```
+
+```{r - checking if the values in the dataframe are the same}
+df_v1 <- df_v1 %>% mutate(is_same = ifelse(y_f_1_v1==y_f_2_v1, TRUE, FALSE))
+
+# defining with new parameters tau and sigma = 3.0
+y_f_1_v2 <- f_1(x_values, 3, 0)
+y_f_2_v2 <- f_2(x_values, 3, 0)
+
+df_v1 <- df_v1 %>% mutate(y_f_1_v2 = y_f_1_v2, 
+                          y_f_2_v2 = y_f_2_v2)
+
+# plotting the functions with second set of parameters
+ggplot(data = df_v1, aes(x = x_values)) +
+  geom_line(aes(y = y_f_1_v2), color = "red") +
+  geom_line(aes(y = y_f_2_v2), color = "blue") + theme_minimal()
+```
+
+
